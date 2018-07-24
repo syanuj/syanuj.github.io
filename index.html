@@ -1,0 +1,599 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>CS 498 Data Visualization</title>
+        <meta name="final project" content="Data Visualization">
+        <link rel="stylesheet" href="main.css">
+        <script src="https://d3js.org/d3.v4.min.js"></script>
+    </head>
+    <body>
+
+        <h1>CS 498 Data Visualization</h1>
+        <h2></h2>
+
+        <!-- Tab links -->
+        <div class="tab">
+          <button class="tablinks" onclick="openEssay(event, 'Essay')">Essay</button>
+          <button class="tablinks" onclick="openGDI(event, 'GDI')">GDI</button>
+          <button class="tablinks" onclick="openGII(event, 'GII')">GII</button>
+          <button class="tablinks" onclick="openGDIGII(event, 'GDIGII')">GDI-GII</button>
+        </div>
+
+        <!-- Tab content -->
+        <div id="Essay" class="tabcontent">
+          <h2>Essay - Gender Development & Inequality Index</h2>
+          <h3>Project Data</h3>
+          <p>The data used for this project is based on 15 countries and it lists the Gender Development Index(GDI) & Gender Inequality Index(GII)
+              for 2001 - 2101. The data has been collected from IMF website. The visualization gives a good insigh into the indexes of gender inequality and helps
+            the user to compare them if needed.</p>
+            <h3>1. Hybrid Structure</h3>
+            <p> The Visualization follows the <b>Martini Glass</b> hybrid structure. The first graph given the details for GDI-Gender Development Index for <thead>
+              15 countries, followed by second chart that gives the details for GII-Gender Inequality Index for 15 countries. Finally the third chart gives the
+              opportunity to the readers to compare both GDI & GII for any country. They can see clearly if GII is improving as GDI improves or not. A higher value of GDI
+              indicates country is spending on gender inequality, a lower GII indicates that there is less inequality.</p>
+          <h3>2. Scenes</h3>
+            <p> The visualization utilizes three scenes. First one being the trend for GDI - Gender Development Index, the second one being GII-Gender Inequality Index and
+            third one being the ability to compare improvement in GII, as the GDI for a country changes over the years from 2001 - 2010. The scenes use the same appearance
+            and attributes for Axis, font, color and graphical represenatation, hence making it easy for the reader to follow. </p>
+          <h3>3. Annotations</h3>
+          <p> The visualization utilizes annotations in first and second scene to mark the growth in GDI & GII. In the first scene annotations tell us about the growth in GDI for
+          Nepal & Yemen. In the second scene the annotations look at GII and indicate how the change in GDI affected the change in GII for Nepal & Yemen.</p>
+          <h3>4. Parameters</h3>
+          <p>Data serves as the parameter in the scenes for the visualization. Tha Line graph on the GDI tab is based on the GDI dataset for the 15 countries.
+          The line graph on the GII tab is based on the GII dataset for the countries. As the user navigates from one scene to another, the dataset changes which leads to change in the Line Graph. In the final
+          scene both the datasets are utilized to draw a comparison of values.</p>
+          <h3>5. Triggers</h3>
+          <p>There are two significant triggers being caused in the scenes. The first trigger is the change in the line grpah which changes as soon as the user navigates
+           from one scene to another, by clicking on the tabs. The second parameter is triggered by the user, when hovering over the countries. As a result of his hovering
+           over the countries, the GDI & GII line graph for those countries are highlighted thus helping the user to see on one scene how one changes with change in other over the years.
+           The guidance for the trigger is provided in the chart, asking the user to hover over the countries. Another trigger is change in the y axis scale from scene 1 to scene 2, caused by change in data.</p>
+        </div>
+
+        <div id="GDI" class="tabcontent">
+          <h3>GDI : Gender Development Index by Country</h3>
+          <svg id="GDIChart" width="1100" height="600"></svg>
+        </div>
+
+        <div id="GII" class="tabcontent">
+          <h3>GII : Gender Inequality Index by Country</h3>
+          <svg id="GIIChart" width="1100" height="600"></svg>
+        </div>
+
+        <div id="GDIGII" class="tabcontent">
+          <h3>Compare GDI/GII for country(Hover over countries to see comparison)</h3>
+          <svg id="GDIGIIChart" width="1100" height="600"></svg>
+        </div>
+
+        <script>
+
+        //EssayText
+
+        function openEssay(evt, tabName) {
+
+            var i, tabcontent, tablinks;
+
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+
+            var width = 1100;
+            var height = 600;
+            var margin = 0;
+
+            var svg = d3.select("#EssayText")
+                .attr("width", width - margin)
+                .attr("height", height - margin);
+
+        }
+
+        //GDI Coding
+
+        function openGDI(evt, tabName) {
+
+            var i, tabcontent, tablinks;
+
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+
+            var width = 1100;
+            var height = 600;
+            var margin = 0;
+
+            var svg = d3.select("#GDIChart")
+                .attr("width", width - margin)
+                .attr("height", height - margin);
+
+            //Define X & Y axis
+
+            var xScale = d3.scalePoint()
+                .domain(['2001', '2002', '2003', '2004', '2005', '2006', '2007', '2008', '2009', '2010'])
+                .range([0, 650]);
+
+            var x_axis = d3.axisBottom()
+                .scale(xScale);
+
+            var g = svg.append("g");
+
+            g.append("g")
+                .attr("transform", "translate(100," + 500 + ")")
+                .call(x_axis);
+
+            //x axix label
+
+            g.append("text")
+                .attr("y", height-50)
+                .attr("x", (width-300)/2)
+                .attr("text-anchor", "end")
+                .attr("stroke", "red")
+                .text("Year");
+
+            var yScale = d3.scaleLinear()
+                .domain([0.5, 1.0])
+                .range([600, 150]);
+
+            var y_axis = d3.axisLeft()
+                .scale(yScale);
+
+            g.append("g")
+                .attr("transform", "translate(100," + -100 + ")")
+                .call(y_axis);
+
+            // y axis label
+
+            g.append("text")
+                .attr("y", height/2)
+                .attr("x", 50)
+                .attr("text-anchor", "end")
+                .attr("stroke", "red")
+                .text("GDI");
+
+            var colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+
+            d3.csv("GDI.csv", function (data) {
+
+            for (var i = 0; i < data.length; i++) {
+
+              var lineGenerator = d3.line();
+
+              var points = [
+                          [xScale('2001'), yScale(data[i].Y2001)],
+                          [xScale('2002'), yScale(data[i].Y2002)],
+                          [xScale('2003'), yScale(data[i].Y2003)],
+                          [xScale('2004'), yScale(data[i].Y2004)],
+                          [xScale('2005'), yScale(data[i].Y2005)],
+                          [xScale('2006'), yScale(data[i].Y2006)],
+                          [xScale('2007'), yScale(data[i].Y2007)],
+                          [xScale('2008'), yScale(data[i].Y2008)],
+                          [xScale('2009'), yScale(data[i].Y2009)],
+                          [xScale('2010'), yScale(data[i].Y2010)],
+                        ];
+
+              var pathData = lineGenerator(points);
+
+              var path = g.append('path')
+                .attr('d', pathData)
+                .attr("transform", "translate(100," + -50 + ")");
+
+              path.style("stroke",colorScale(i));
+
+              g.append("rect")
+                .attr("x",900)
+                .attr("y",((15-i)*20)-10)
+                .attr("width",10)
+                .attr("height",10)
+                .attr("fill",colorScale(i));
+
+              g.append("text")
+                .attr("y",(15-i)*20)
+                .attr("x", 920)
+                .attr("text-anchor", "begin")
+                .attr("stroke", "grayscale")
+                .text(data[i].CountryName);
+
+              }
+
+              g.append("text")
+                .attr("y",200)
+                .attr("x",750)
+                .attr("text-anchor", "begin")
+                .attr("stroke", "grayscale")
+                .attr("font-size", 10)
+                .text("Nepal Improved its GDI");
+
+              g.append("text")
+                .attr("y",215)
+                .attr("x",750)
+                .attr("text-anchor", "begin")
+                .attr("stroke", "grayscale")
+                .attr("font-size", 10)
+                .text("considerably over years");
+
+              g.append("text")
+                .attr("y",350)
+                .attr("x",750)
+                .attr("text-anchor", "begin")
+                .attr("stroke", "grayscale")
+                .attr("font-size", 10)
+                .text("Yemen Improved its GDI");
+
+              g.append("text")
+                .attr("y",365)
+                .attr("x",750)
+                .attr("text-anchor", "begin")
+                .attr("stroke", "grayscale")
+                .attr("font-size", 10)
+                .text("considerably over years");
+
+            });
+
+        }
+
+        //GII Coding
+
+        function openGII(evt, tabName) {
+
+            var i, tabcontent, tablinks;
+
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+
+            var width = 1100;
+            var height = 600;
+            var margin = 0;
+
+            var svg = d3.select("#GIIChart")
+                .attr("width", width - margin)
+                .attr("height", height - margin);
+
+            //Define X & Y axis
+
+            var xScale1 = d3.scalePoint()
+                .domain(['2001', '2002', '2003', '2004', '2005', '2006', '2007', '2008', '2009', '2010'])
+                .range([0, 650]);
+
+            var x_axis1 = d3.axisBottom()
+                .scale(xScale1);
+
+            var g = svg.append("g");
+
+            g.append("g")
+                .attr("transform", "translate(100," + 500 + ")")
+                .call(x_axis1);
+
+            //x axix label
+
+            g.append("text")
+                .attr("y", height-50)
+                .attr("x", (width-300)/2)
+                .attr("text-anchor", "end")
+                .attr("stroke", "red")
+                .text("Year");
+
+            var yScale1 = d3.scaleLinear()
+                .domain([0.01, 0.8])
+                .range([600, 150]);
+
+            var y_axis1 = d3.axisLeft()
+                .scale(yScale1);
+
+            g.append("g")
+                .attr("transform", "translate(100," + -100 + ")")
+                .call(y_axis1);
+
+            // y axis label
+
+            g.append("text")
+                .attr("y", height/2)
+                .attr("x", 50)
+                .attr("text-anchor", "end")
+                .attr("stroke", "red")
+                .text("GII");
+
+            var colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+
+            d3.csv("GII.csv", function (data) {
+
+            for (var i = 0; i < data.length; i++) {
+
+              console.log(data);
+
+              var lineGenerator1 = d3.line();
+
+              var points1 = [
+                          [xScale1('2001'), yScale1(data[i].Y2001)],
+                          [xScale1('2002'), yScale1(data[i].Y2002)],
+                          [xScale1('2003'), yScale1(data[i].Y2003)],
+                          [xScale1('2004'), yScale1(data[i].Y2004)],
+                          [xScale1('2005'), yScale1(data[i].Y2005)],
+                          [xScale1('2006'), yScale1(data[i].Y2006)],
+                          [xScale1('2007'), yScale1(data[i].Y2007)],
+                          [xScale1('2008'), yScale1(data[i].Y2008)],
+                          [xScale1('2009'), yScale1(data[i].Y2009)],
+                          [xScale1('2010'), yScale1(data[i].Y2010)],
+                        ];
+
+              var pathData1 = lineGenerator1(points1);
+
+              var path1 = g.append('path')
+                .attr('d', pathData1)
+                .attr("transform", "translate(100," + -50 + ")");
+
+              path1.style("stroke",colorScale(i));
+
+              g.append("rect")
+                .attr("x",900)
+                .attr("y",((15-i)*20)-10)
+                .attr("width",10)
+                .attr("height",10)
+                .attr("fill",colorScale(i));
+
+              g.append("text")
+                .attr("y",(15-i)*20)
+                .attr("x", 920)
+                .attr("text-anchor", "begin")
+                .attr("stroke", "grayscale")
+                .text(data[i].CountryName);
+
+              }
+
+              g.append("text")
+                .attr("y",270)
+                .attr("x",750)
+                .attr("text-anchor", "begin")
+                .attr("stroke", "grayscale")
+                .attr("font-size", 10)
+                .text("Nepal Improved on GII");
+
+              g.append("text")
+                .attr("y",285)
+                .attr("x",750)
+                .attr("text-anchor", "begin")
+                .attr("stroke", "grayscale")
+                .attr("font-size", 10)
+                .text("as GDI Improved");
+
+              g.append("text")
+                .attr("y",110)
+                .attr("x",750)
+                .attr("text-anchor", "begin")
+                .attr("stroke", "grayscale")
+                .attr("font-size", 10)
+                .text("Yemen stays with high GII");
+
+              g.append("text")
+                .attr("y",125)
+                .attr("x",750)
+                .attr("text-anchor", "begin")
+                .attr("stroke", "grayscale")
+                .attr("font-size", 10)
+                .text("though some GDI Improved");
+
+            });
+
+        }
+        //GDI-GII Compare Coding
+
+        function openGDIGII(evt, tabName) {
+
+            var i, tabcontent, tablinks;
+
+            tabcontent = document.getElementsByClassName("tabcontent");
+
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+
+            var width = 1100;
+            var height = 600;
+
+            var svg = d3.select("#GDIGIIChart")
+                .attr("width", width)
+                .attr("height", height);
+
+                //Define X & Y axis
+
+                var xScale = d3.scalePoint()
+                    .domain(['2001', '2002', '2003', '2004', '2005', '2006', '2007', '2008', '2009', '2010'])
+                    .range([0, 650]);
+
+                var x_axis = d3.axisBottom()
+                    .scale(xScale);
+
+                var g = svg.append("g");
+
+                g.append("g")
+                    .attr("transform", "translate(100," + 500 + ")")
+                    .call(x_axis);
+
+                //x axix label
+
+                g.append("text")
+                    .attr("y", height-50)
+                    .attr("x", (width-300)/2)
+                    .attr("text-anchor", "end")
+                    .attr("stroke", "red")
+                    .text("Year");
+
+                var yScale = d3.scaleLinear()
+                    .domain([0.0, 1.0])
+                    .range([600, 150]);
+
+                var y_axis = d3.axisLeft()
+                    .scale(yScale);
+
+                g.append("g")
+                    .attr("transform", "translate(100," + -100 + ")")
+                    .call(y_axis);
+
+                // y axis label
+
+                g.append("text")
+                    .attr("y", height/2)
+                    .attr("x", 60)
+                    .attr("text-anchor", "end")
+                    .attr("stroke", "red")
+                    .text("GDI-GII");
+
+                var colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+
+                d3.csv("GDIGII.csv", function (data) {
+
+                for (var i = 0; i < data.length; i++) {
+
+                  var lineGenerator = d3.line();
+
+                  var points1 = [
+                              [xScale('2001'), yScale(data[i].GDIY2001)],
+                              [xScale('2002'), yScale(data[i].GDIY2002)],
+                              [xScale('2003'), yScale(data[i].GDIY2003)],
+                              [xScale('2004'), yScale(data[i].GDIY2004)],
+                              [xScale('2005'), yScale(data[i].GDIY2005)],
+                              [xScale('2006'), yScale(data[i].GDIY2006)],
+                              [xScale('2007'), yScale(data[i].GDIY2007)],
+                              [xScale('2008'), yScale(data[i].GDIY2008)],
+                              [xScale('2009'), yScale(data[i].GDIY2009)],
+                              [xScale('2010'), yScale(data[i].GDIY2010)],
+                            ];
+
+                  var points2 = [
+                              [xScale('2001'), yScale(data[i].GIIY2001)],
+                              [xScale('2002'), yScale(data[i].GIIY2002)],
+                              [xScale('2003'), yScale(data[i].GIIY2003)],
+                              [xScale('2004'), yScale(data[i].GIIY2004)],
+                              [xScale('2005'), yScale(data[i].GIIY2005)],
+                              [xScale('2006'), yScale(data[i].GIIY2006)],
+                              [xScale('2007'), yScale(data[i].GIIY2007)],
+                              [xScale('2008'), yScale(data[i].GIIY2008)],
+                              [xScale('2009'), yScale(data[i].GIIY2009)],
+                              [xScale('2010'), yScale(data[i].GIIY2010)],
+                            ];
+
+                  var pathData1 = lineGenerator(points1);
+
+                  var pathData2 = lineGenerator(points2);
+
+                  var pathGDI = g.append('path')
+                    .attr('d', pathData1)
+                    .attr("id",data[i].CountryName)
+                    .attr("transform", "translate(100," + -50 + ")");
+
+                  var pathGII = g.append('path')
+                    .attr('d', pathData2)
+                    .attr("id",data[i].CountryName)
+                    .attr("transform", "translate(100," + -50 + ")");
+
+
+                  pathGDI.style("stroke",colorScale(i));
+                  pathGDI.style("opacity",.1);
+
+                  pathGII.style("stroke",colorScale(i));
+                  pathGII.style("opacity",.1);
+
+                  g.append("rect")
+                    .attr("x",900)
+                    .attr("y",((15-i)*20)-10)
+                    .attr("width",10)
+                    .attr("height",10)
+                    .attr("fill",colorScale(i));
+
+                  g.append("text")
+                    .attr("y",(15-i)*20)
+                    .attr("x", 920)
+                    .attr("text-anchor", "begin")
+                    .attr("stroke", "grayscale")
+                    .attr("id",data[i].CountryName)
+                    .on("mouseover", onMouseOver)
+                    .on("mouseout", onMouseOut)
+                    .text(data[i].CountryName);
+
+                  g.append("text")
+                    .attr("y",yScale(data[i].GDIY2010)-45)
+                    .attr("x",xScale(2010)+110)
+                    .attr("text-anchor", "begin")
+                    .style("font-size",12)
+                    .style("visibility","hidden")
+                    .attr("id",data[i].CountryName+"t")
+                    .text("GDI");
+
+                    g.append("text")
+                      .attr("y",yScale(data[i].GIIY2010)-45)
+                      .attr("x",xScale(2010)+110)
+                      .attr("text-anchor", "begin")
+                      .style("font-size",12)
+                      .style("visibility","hidden")
+                      .attr("id",data[i].CountryName+"t")
+                      .text("GII");
+                  }
+
+                });
+
+                function onMouseOver(d, i) {
+                  d3.select(this)
+                  .attr('stroke', "red");
+
+                  d3.selectAll("#"+this.id)
+                    .style("stroke-width",2.5)
+                    .style("opacity",2);
+
+                  d3.selectAll("#"+this.id+"t")
+                    .style("visibility","visible")
+
+                }
+
+                function onMouseOut(d, i) {
+                  d3.select(this)
+                  .attr('stroke', "black");
+
+                  d3.selectAll("#"+this.id)
+                  .style("stroke-width",1.5)
+                    .style("opacity",.1);
+
+                  d3.selectAll("#"+this.id+"t")
+                    .style("visibility","hidden")
+
+                }
+
+        }
+
+        </script>
+    </body>
+</html>
